@@ -46,20 +46,35 @@ app.use("/api/v1/resume", resumeRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
-async function startServer() {
-  try {
-    await connectDatabase();
+// async function startServer() {
+//   try {
+//     await connectDatabase();
+//     console.log("MongoDB connected");
+
+//     app.listen(PORT, () => {
+//       console.log(`Server running on port ${PORT}`);
+//     });
+//   } catch (error) {
+//     console.error("Failed to start server:", error);
+//     process.exit(1);
+//   }
+// }
+
+// startServer();
+// DATABASE CONNECTION
+connectDatabase()
+  .then(() => {
     console.log("MongoDB connected");
+  })
+  .catch((error) => {
+    console.error(
+      "Database connection failed:",
+      error
+    );
+  });
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-    process.exit(1);
-  }
-}
 
-startServer();
+// EXPORT APP FOR VERCEL
+export default app;
