@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-
 dotenv.config();
+
 import path from "path";
 import express from "express";
 import cors from "cors";
@@ -16,6 +16,7 @@ import aiRoutes from "./routes/ai.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
+
 app.set("trust proxy", 1);
 
 const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
@@ -34,6 +35,36 @@ app.use(
   express.static(path.join(__dirname, "../uploads"))
 );
 
+// --------------------
+// DB CONNECTION MIDDLEWARE (IMPORTANT FIX)
+// --------------------
+let dbConnected = false;
+let dbPromise: Promise<any> | null = null;
+
+const ensureDBConnection = async () => {
+  if (dbConnected) return;
+
+  if (!dbPromise) {
+    dbPromise = connectDatabase();
+  }
+
+  await dbPromise;
+  dbConnected = true;
+  console.log("MongoDB connected");
+};
+
+// attach middleware BEFORE routes
+app.use(async (_req, _res, next) => {
+  try {
+    await ensureDBConnection();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// -------------------- ROUTES --------------------
+
 app.get("/", (_req, res) => {
   res.send("API running...");
 });
@@ -47,37 +78,4 @@ app.use("/api/v1/resume", resumeRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 
-// const PORT = process.env.PORT || 5000;
-
-// async function startServer() {
-//   try {
-//     await connectDatabase();
-//     console.log("MongoDB connected");
-
-//     app.listen(PORT, () => {
-//       console.log(`Server running on port ${PORT}`);
-//     });
-//   } catch (error) {
-//     console.error("Failed to start server:", error);
-//     process.exit(1);
-//   }
-// }
-
-// startServer();
-// DATABASE CONNECTION
-let isConnected = false;
-
-const connectDB = async () => {
-  if (isConnected) return;
-
-  await connectDatabase();
-
-  isConnected = true;
-
-  console.log("MongoDB connected");
-};
-
-connectDB();
-
-// EXPORT APP FOR VERCEL
 export default app;
