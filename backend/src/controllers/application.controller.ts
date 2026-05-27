@@ -30,7 +30,7 @@ import {
         await applyForJobService({
           applicantId:
             (req as any).user._id,
-          jobId: req.params.id,
+          jobId: req.params.id as string,
           resume:
             parsedData.resume,
           coverLetter:
@@ -103,7 +103,7 @@ import {
   
         const applicants =
           await getJobApplicantsService(
-            req.params.id,
+            req.params.id as string,
             (req as any).user._id
           );
   
@@ -138,9 +138,9 @@ import {
   
         const application =
           await updateApplicationStatusService(
-            req.params.applicationId,
-            (req as any).user._id,
-            req.body.status
+              req.params.applicationId as string,
+              (req as any).user._id,
+              req.body.status
           );
   
         return res.status(200).json({
@@ -175,7 +175,7 @@ import {
 
         const application =
           await getRecruiterApplicationByIdService(
-            req.params.id,
+            req.params.id as string,
             (req as any).user._id
           );
 

@@ -17,7 +17,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
 
-const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:3000";
+const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
 
 app.use(
   cors({

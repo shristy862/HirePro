@@ -1,8 +1,9 @@
-import type { UserDocument } from "@backend/models/user.model";
-import { UserModel } from "@backend/models/user.model";
+import User, { type IUser } from "../models/user";
 
 export class UserService {
-  static async findByEmail(email: string): Promise<UserDocument | null> {
-    return UserModel.findOne({ email }).lean<UserDocument>();
+  static async findByEmail(
+    email: string
+  ): Promise<IUser | null> {
+    return User.findOne({ email });
   }
 }
