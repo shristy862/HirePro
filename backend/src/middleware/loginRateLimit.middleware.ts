@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit";
 
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 
 export const loginRateLimiter = rateLimit({
@@ -9,6 +9,16 @@ export const loginRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
+
+  // 🔥 IMPORTANT FIX FOR VERCEL
+  keyGenerator: (req) => {
+    return (
+      req.ip ||
+      req.headers["x-forwarded-for"]?.toString().split(",")[0] ||
+      "unknown-ip"
+    );
+  },
+
   message: {
     success: false,
     message:
