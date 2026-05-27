@@ -11,8 +11,8 @@ export async function connectDatabase(): Promise<typeof mongoose> {
     throw new Error("MONGODB_URI is not configured");
   }
 
-  // 1 = connected, 2 = connecting
-  if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) {
+  // 1 = connected
+  if (mongoose.connection.readyState === 1) {
     return mongoose;
   }
 
@@ -26,6 +26,7 @@ export async function connectDatabase(): Promise<typeof mongoose> {
       });
   }
 
+  // If connecting, await the in-flight promise instead of returning early.
   await globalForMongoose.mongooseConnection;
   return mongoose;
 }
