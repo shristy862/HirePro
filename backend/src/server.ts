@@ -16,6 +16,7 @@ import aiRoutes from "./routes/ai.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
+app.set("trust proxy", 1);
 
 const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
 
@@ -64,17 +65,19 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 
 // startServer();
 // DATABASE CONNECTION
-connectDatabase()
-  .then(() => {
-    console.log("MongoDB connected");
-  })
-  .catch((error) => {
-    console.error(
-      "Database connection failed:",
-      error
-    );
-  });
+let isConnected = false;
 
+const connectDB = async () => {
+  if (isConnected) return;
+
+  await connectDatabase();
+
+  isConnected = true;
+
+  console.log("MongoDB connected");
+};
+
+connectDB();
 
 // EXPORT APP FOR VERCEL
 export default app;
