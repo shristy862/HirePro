@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { BriefcaseBusiness, Check } from "lucide-react";
 import { APP_NAME } from "@/constants/navigation";
 import { cn } from "@/lib/utils";
 
@@ -19,11 +19,14 @@ export function Logo({
 }: LogoProps) {
   const content = (
     <>
-      <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25">
-        <Sparkles className="size-4" aria-hidden />
+      <div className="relative flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25">
+        <BriefcaseBusiness className="size-4" aria-hidden />
+        <span className="absolute -bottom-1 -right-1 flex size-3.5 items-center justify-center rounded-full border border-background bg-emerald-500 text-[9px] text-white">
+          <Check className="size-2.5" aria-hidden />
+        </span>
       </div>
       {showText && (
-        <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-indigo-400">
+        <span className="bg-gradient-to-r from-violet-700 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-indigo-400">
           {APP_NAME}
         </span>
       )}

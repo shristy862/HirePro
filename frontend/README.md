@@ -1,49 +1,77 @@
-# HireFlow — Frontend
+# HireFlow
 
-Recruitment automation SaaS built with **Next.js 16**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui**.
+AI-assisted hiring platform with two role-based experiences:
+- **Recruiter**: post jobs, review applications, update statuses
+- **Jobseeker**: discover jobs, apply, track progress, improve profile
 
-## Run locally
+## 1) Clone and install
 
 ```bash
-npm install
+git clone https://github.com/shristy862/HirePro
+cd hireflow-ai
+```
+
+Install both apps:
+
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+## 2) Environment variables (required)
+
+`.env` files are mandatory for local/dev and production.
+
+Backend (`backend/.env`) required keys:
+- `PORT`
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `CLIENT_URL` (for example: `http://localhost:5173`)
+- AI keys if enabled (`GEMINI_API_KEY` and/or `HF_TOKEN`)
+
+Frontend (`frontend/.env.local`) required key:
+- `NEXT_PUBLIC_API_URL` (for example: `http://localhost:5000/api/v1`)
+
+You can start from:
+- `frontend/.env.example`
+- your existing `backend/.env`
+
+## 3) Run the app
+
+Backend:
+
+```bash
+cd backend
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Frontend:
 
-## Pages
-
-| Route | Description |
-|-------|-------------|
-| `/` | Landing page |
-| `/login` | Sign in |
-| `/signup` | Create account |
-| `/recruiter` | Recruiter dashboard |
-| `/candidate` | Candidate dashboard |
-| `/jobs` | Jobs listing with search & filters |
-| `/jobs/[id]` | Job details |
-| `/applications` | Applications table |
-| `/settings` | Profile & notifications |
-
-## Environment
-
-Copy `.env.example` to `.env.local`:
-
-```
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```bash
+cd frontend
+npm run dev
 ```
 
-When the backend is offline, the app uses mock data automatically.
+Open: `http://localhost:5173`
 
-## Deploy (Vercel)
+## How to use
 
-1. Import the `frontend` folder as a Vercel project.
-2. Set `NEXT_PUBLIC_API_URL` to your production API.
-3. CI runs via `.github/workflows/frontend-ci.yml` on push.
+### Recruiter flow
+1. Sign up/login as `recruiter`
+2. Create job posts from Jobs
+3. Open Applications to review candidates
+4. View application detail and update status
+5. Use Settings to update account/profile picture
 
-## Stack
+### Jobseeker flow
+1. Sign up/login as `candidate`
+2. Complete profile and upload resume
+3. Browse jobs and apply
+4. Save jobs for later
+5. Track statuses in My Applications and improve profile from AI feedback
 
-- Next.js 16 App Router · React 19 · TypeScript
-- Tailwind CSS 4 · shadcn/ui · lucide-react
-- next-themes (auto day/night + manual toggle)
-- react-hook-form · zod · axios · recharts · sonner
+## Tech stack
+
+- Next.js 16 + React 19 + TypeScript
+- Tailwind CSS + shadcn/ui + lucide-react
+- Axios + React Hook Form + Zod + Recharts + Sonner

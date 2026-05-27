@@ -4,6 +4,7 @@ dotenv.config();
 import path from "path";
 import express from "express";
 import cors from "cors";
+import type { NextFunction, Request, Response } from "express";
 
 import authRoutes from "./routes/auth.routes";
 import { connectDatabase } from "./lib/db";
@@ -38,25 +39,8 @@ app.use(
 // --------------------
 // DB CONNECTION MIDDLEWARE (IMPORTANT FIX)
 // --------------------
-let dbConnected = false;
-let dbPromise: Promise<any> | null = null;
-
 const ensureDBConnection = async () => {
-  if (dbConnected) return;
-
-  if (!dbPromise) {
-    dbPromise = connectDatabase();
-  }
-
-  try {
-    await dbPromise;
-    dbConnected = true;
-    console.log("MongoDB connected");
-  } catch (error) {
-    dbPromise = null;
-    dbConnected = false;
-    throw error;
-  }
+  await connectDatabase();
 };
 
 // attach middleware BEFORE routes
@@ -64,12 +48,8 @@ app.use(async (_req, _res, next) => {
   try {
     await ensureDBConnection();
     next();
-  } catch (err) {
-    next(
-      new Error(
-        "Database connection is not ready. Please retry in a few seconds."
-      )
-    );
+  } catch (_err) {
+    next(new Error("DB_NOT_READY"));
   }
 });
 
@@ -87,5 +67,27 @@ app.use("/api/v1/saved-jobs", savedJobRoutes);
 app.use("/api/v1/resume", resumeRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
+
+app.use(
+  (
+    err: Error,
+    _req: Request,
+    res: Response,
+    _next: NextFunction
+  ) => {
+    if (err.message === "DB_NOT_READY") {
+      return res.status(503).json({
+        success: false,
+        message:
+          "Database connection is initializing. Please retry in a few seconds.",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+);
 
 export default app;

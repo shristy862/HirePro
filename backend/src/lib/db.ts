@@ -11,12 +11,21 @@ export async function connectDatabase(): Promise<typeof mongoose> {
     throw new Error("MONGODB_URI is not configured");
   }
 
-  if (!globalForMongoose.mongooseConnection) {
-    globalForMongoose.mongooseConnection = mongoose.connect(
-      databaseConfig.uri,
-      databaseConfig.options,
-    );
+  // 1 = connected, 2 = connecting
+  if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) {
+    return mongoose;
   }
 
-  return globalForMongoose.mongooseConnection;
+  if (!globalForMongoose.mongooseConnection) {
+    globalForMongoose.mongooseConnection = mongoose
+      .connect(databaseConfig.uri, databaseConfig.options)
+      .catch((error) => {
+        // Reset cached promise on failure so next request can retry.
+        globalForMongoose.mongooseConnection = undefined;
+        throw error;
+      });
+  }
+
+  await globalForMongoose.mongooseConnection;
+  return mongoose;
 }
