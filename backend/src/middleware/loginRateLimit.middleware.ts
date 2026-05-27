@@ -6,20 +6,10 @@ export const loginRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
-
-  //  IMPORTANT FIX FOR VERCEL + NEW express-rate-limit
-  validate: {
-    xForwardedForHeader: false,
-    forwardedHeader: false,
-  },
-
-  keyGenerator: (req) => {
-    return (
-      req.headers["x-forwarded-for"]?.toString().split(",")[0] ||
-      req.socket.remoteAddress ||
-      "unknown"
-    );
-  },
+  // In proxy setups (Vercel), rely on Express `req.ip` + trust proxy.
+  // Disable strict header validation checks that can throw in serverless edges.
+  validate: false,
+  keyGenerator: (req) => req.ip ?? req.socket.remoteAddress ?? "unknown",
 
   message: {
     success: false,

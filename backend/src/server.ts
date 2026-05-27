@@ -17,7 +17,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
 
-app.set("trust proxy", 1);
+app.set("trust proxy", true);
 
 const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
 
@@ -48,9 +48,15 @@ const ensureDBConnection = async () => {
     dbPromise = connectDatabase();
   }
 
-  await dbPromise;
-  dbConnected = true;
-  console.log("MongoDB connected");
+  try {
+    await dbPromise;
+    dbConnected = true;
+    console.log("MongoDB connected");
+  } catch (error) {
+    dbPromise = null;
+    dbConnected = false;
+    throw error;
+  }
 };
 
 // attach middleware BEFORE routes
@@ -59,7 +65,11 @@ app.use(async (_req, _res, next) => {
     await ensureDBConnection();
     next();
   } catch (err) {
-    next(err);
+    next(
+      new Error(
+        "Database connection is not ready. Please retry in a few seconds."
+      )
+    );
   }
 });
 
