@@ -1,21 +1,23 @@
 import rateLimit from "express-rate-limit";
 
-const WINDOW_MS = 15 * 60 * 1000;
-const MAX_ATTEMPTS = 5;
-
 export const loginRateLimiter = rateLimit({
-  windowMs: WINDOW_MS,
-  max: MAX_ATTEMPTS,
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
 
-  // 🔥 IMPORTANT FIX FOR VERCEL
+  //  IMPORTANT FIX FOR VERCEL + NEW express-rate-limit
+  validate: {
+    xForwardedForHeader: false,
+    forwardedHeader: false,
+  },
+
   keyGenerator: (req) => {
     return (
-      req.ip ||
       req.headers["x-forwarded-for"]?.toString().split(",")[0] ||
-      "unknown-ip"
+      req.socket.remoteAddress ||
+      "unknown"
     );
   },
 
