@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
+    "moduleResolution": "node",
+
     "rootDir": "./src",
     "outDir": "./dist",
 
@@ -10,17 +12,10 @@
     "skipLibCheck": true,
 
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
 
-    "noUncheckedIndexedAccess": true,
-    // "exactOptionalPropertyTypes": true,
+    "types": ["node"],
 
-    "isolatedModules": true,
-
-    "moduleResolution": "node",
-
-    "types": ["node"]
+    "ignoreDeprecations": "5.0"
   },
 
   "include": ["src"],
